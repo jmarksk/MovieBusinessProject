@@ -207,6 +207,7 @@ pd.read_sql(q8, conn)
 0	actor	Loki	9.9	417
 1	actor	Chris Scagos	9.7	5600
 2	actor	John Luder	9.7	5600
+
 3	actor	Rafal Zawierucha	9.7	5600
 4	actress	Jennifer Churchich	9.7	5600
 
@@ -230,6 +231,8 @@ df3.set_index('movie', inplace=True)
 #Last step to show actors/actresses in highest grossing movies: Join two data frames to add sales figures to actor/movie dataframe.
 df_actorsSales = df3.join(df12, how = "inner")
 
+
+
 actorsSalesSorted = df_actorsSales.sort_values('worldwide_gross', ascending = False).head(30)
 df_actorsSalesSorted 
 
@@ -242,3 +245,18 @@ df_actorsSalesSorted.iloc[:,4:]
 	worldwide_gross	profits	primary_profession	primary_name	averagerating	numvotes
 Avengers: Infinity War	2.048134e+09	1.748134e+09	actor	Winston Duke	8.5	670926
 Avengers: Infinity War	2.048134e+09	1.748134e+09	actor	Ethan Dizon	8.5	670926
+
+#Check for seasonality in vote_average
+months = []
+for i in df3['release_date']:
+    newmonth = i[0:3]
+    months.append(newmonth)   
+months
+
+df3['releaseMonth']=months
+df3_month = df3.loc[:, ("worldwide_gross",'releaseMonth')]
+
+df3_month.groupby('releaseMonth').mean().plot(kind='bar')
+
+lot:xlabel='releaseMonth'> 
+No seasonality given low grossing averages in Aug, Jan, high in November, May.
