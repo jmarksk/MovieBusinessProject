@@ -1,9 +1,9 @@
-#Reading in data and initial exploratory analysis.
+# Reading in data and initial exploratory analysis.
 
-#Dropping rows with null values as still have large dataset without them.
-#Changing datatypes to numeric to increase workability.
+# Dropping rows with null values as still have large dataset without them.
+# Changing datatypes to numeric to increase workability.
 
-#Find which studios produce movies.
+# Find which studios produce movies.
 
 
 #See the distribution of films by studio
