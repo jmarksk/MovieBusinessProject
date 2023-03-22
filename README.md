@@ -1,12 +1,19 @@
-# Reading in data and initial exploratory analysis.
+# Business Problem
+My task was to come up with 3 recommendations for Microsoft in connection with its interest in entering the film market and producing original content.
 
-# Dropping rows with null values as still have large dataset without them.
-# Changing datatypes to numeric to increase workability.
+# Data Understanding
+we were provided with data from several different sources: Box Office Mojo, Rotten Tomatoes, the IMDB, TMDB and TN.  The data sets were of different sorts and contained different information.  IMDB was the only SQL/relational database; all the others were either comma or tab separated formats.  The concentration of the IMDB database was on the people associated with the movie.  The concentration of the Box office Mojo and TN data were on the financial aspects of the movies.  The concentration of the Rotten Tomatoes and TMDB data were on the fan ratings and other specifics of the movies.
+
+
+# Read in data and initial exploratory analysis.
+
+# Drop rows with null values as still have large dataset without them.
+# Change datatypes to numeric to increase workability.
 
 # Find which studios produce movies.
 
 
-#See the distribution of films by studio
+# See the distribution of films by studio
 df2studios= df2['studio'].value_counts().head(20)
 ​
 df2studios
@@ -34,7 +41,7 @@ CJ         56
 
 sum(df2['domestic_gross'])
 
-#convert foreign_gross from object type to float.
+# convert foreign_gross from object type to float.
 
 df2_1 = pd.to_numeric(df2['foreign_gross'], errors = 'coerce')
 
@@ -42,10 +49,10 @@ df2_1 = pd.to_numeric(df2['foreign_gross'], errors = 'coerce')
 
 df2['foreign_gross']=df2_1
 
-#estimate size of market by year, at least tens of billions.
+# estimate size of market by year, at least tens of billions.
 df2.groupby('year').sum()
 
-#Find the most popular genres.
+# Find the most popular genres.
 q = pd.read_sql("""
 SELECT *
   FROM movie_basics;
@@ -60,7 +67,7 @@ q2_2 = q2_1.loc[:, 'movie_id']
 
 q2_2.plot(kind = 'bar')
 
-#Find out what genres get the highest ratings.
+# Find out what genres get the highest ratings.
 q3 = """SELECT mb.genres, mr.averagerating, mr.numvotes
         FROM movie_basics as mb
         JOIN movie_ratings as mr
@@ -105,13 +112,13 @@ Name: rating, dtype: int64
 
 df3
 
-#Change monetary information from strings to numeric.
+# Change monetary information from strings to numeric.
 
 df3["production_budget"] = df3["production_budget"].replace("[$,]", "", regex=True).astype(int)
 df3["domestic_gross"] = df3["domestic_gross"].replace("[$,]", "", regex=True).astype(int)
 df3["worldwide_gross"] = df3["worldwide_gross"].replace("[$,]", "", regex=True).astype(float)
 
-#Summary statistics for costs and revenues.
+# Summary statistics for costs and revenues.
 df3.describe()
 
 id	production_budget	domestic_gross	worldwide_gross
@@ -136,13 +143,13 @@ df3.plot('production_budget', 'domestic_gross', kind='scatter')
 df3.plot('production_budget', 'worldwide_gross', kind='scatter')
 
 
-#There is some correlation between production budget and sales, especially internationally, but many lower budget movies have higher sales as well.
+# There is some correlation between production budget and sales, especially internationally, but many lower budget movies have higher sales as well.
 df3.plot('domestic_gross', 'worldwide_gross', kind='scatter')
 
 df9 =df8.groupby('rating').mean('box_office')
 df9
 
-#Below, it's shown the top four most popular ratings, in order, are PG-13, PG, R and G.  PG-13 has almost 3x as much sales as R.
+# Below, it's shown the top four most popular ratings, in order, are PG-13, PG, R and G.  PG-13 has almost 3x as much sales as R.
 
 rating		
 G	1368.400000	7.402788e+06
@@ -155,7 +162,7 @@ R	921.019048	2.394827e+07
 df10.plot(kind = 'bar')
 
 
-#Highest rated movies.
+# Highest rated movies.
 q7 = """SELECT mb.primary_title, mr.averagerating, mr.numvotes
         FROM movie_basics as mb
         JOIN movie_ratings as mr
@@ -171,7 +178,7 @@ primary_title	averagerating	numvotes
 3	Hercule contre Hermès	10.0	5
 4	I Was Born Yesterday!	10.0	6
 
-#Find out the professionals/actors who have been voted most on by fans.
+# Find out the professionals/actors who have been voted most on by fans.
 q8 = """SELECT p.primary_profession, p.primary_name, mr.averagerating, mr.numvotes
         FROM movie_ratings as mr
         JOIN known_for as kf
@@ -191,7 +198,7 @@ primary_profession	primary_name	averagerating	numvotes
 3	actor	Oliver Cotton	8.4	1387769
 4	actor	Cameron Jack	8.4	1387769
 
-#Find out the actors who have been voted highest on by fans.
+# Find out the actors who have been voted highest on by fans.
 q8 = """SELECT p.primary_profession, p.primary_name, mr.averagerating, mr.numvotes
         FROM movie_ratings as mr
         JOIN known_for as kf
@@ -211,7 +218,7 @@ pd.read_sql(q8, conn)
 3	actor	Rafal Zawierucha	9.7	5600
 4	actress	Jennifer Churchich	9.7	5600
 
-#First step to show actors/actresses in highest grossing movies: Join SQL IMDB tables in order to have actresses and movie in same table.
+# First step to show actors/actresses in highest grossing movies: Join SQL IMDB tables in order to have actresses and movie in same table.
 q10 = """SELECT mb.primary_title, p.primary_profession, p.primary_name, mr.averagerating, mr.numvotes
         FROM movie_ratings as mr
         JOIN movie_basics as mb
@@ -228,7 +235,7 @@ df12.set_index('primary_title', inplace=True)
 
 df3.set_index('movie', inplace=True)
 
-#Last step to show actors/actresses in highest grossing movies: Join two data frames to add sales figures to actor/movie dataframe.
+# Last step to show actors/actresses in highest grossing movies: Join two data frames to add sales figures to actor/movie dataframe.
 df_actorsSales = df3.join(df12, how = "inner")
 
 
@@ -246,7 +253,7 @@ df_actorsSalesSorted.iloc[:,4:]
 Avengers: Infinity War	2.048134e+09	1.748134e+09	actor	Winston Duke	8.5	670926
 Avengers: Infinity War	2.048134e+09	1.748134e+09	actor	Ethan Dizon	8.5	670926
 
-#Check for seasonality in vote_average
+# Check for seasonality in vote_average
 months = []
 for i in df3['release_date']:
     newmonth = i[0:3]
@@ -260,3 +267,6 @@ df3_month.groupby('releaseMonth').mean().plot(kind='bar')
 
 lot:xlabel='releaseMonth'> 
 No seasonality given low grossing averages in Aug, Jan, high in November, May.
+
+# Conclusion¶
+Microsoft should follow these 3 recommedations: a) Microsoft should spend money, but with caution, in order to achieve higher profits, b) Microsoft should target the documentary, comedy and drama genres and the ratings categories of PG-13, PG and R, and c) Microsoft should focus on the movies and actors highlighted in the presentation who did well in terms of box office sales and fan ratings
