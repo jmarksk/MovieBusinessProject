@@ -1,16 +1,13 @@
+# Overview
+
+In order to come up with recommendations for Microsoft in connection with its interest in entering the film market and producing original content, I made use of five data source to recommend that a) Microsoft should spend money, but with caution, in order to achieve higher profits, b) Microsoft should target the documentary, comedy and drama genres and the ratings categories of PG-13, PG and R, and c) Microsoft should focus on the movies and actors highlighted in the presentation who did well in terms of box office sales and fan ratings.
+
 # Business Problem
 My task was to come up with 3 recommendations for Microsoft in connection with its interest in entering the film market and producing original content.
 
 # Data Understanding
 we were provided with data from several different sources: Box Office Mojo, Rotten Tomatoes, the IMDB, TMDB and TN.  The data sets were of different sorts and contained different information.  IMDB was the only SQL/relational database; all the others were either comma or tab separated formats.  The concentration of the IMDB database was on the people associated with the movie.  The concentration of the Box office Mojo and TN data were on the financial aspects of the movies.  The concentration of the Rotten Tomatoes and TMDB data were on the fan ratings and other specifics of the movies.
 
-
-# Read in data and initial exploratory analysis.
-
-# Drop rows with null values as still have large dataset without them.
-# Change datatypes to numeric to increase workability.
-
-# Find which studios produce movies.
 
 
 # See the distribution of films by studio
@@ -41,13 +38,6 @@ CJ         56
 
 sum(df2['domestic_gross'])
 
-# convert foreign_gross from object type to float.
-
-df2_1 = pd.to_numeric(df2['foreign_gross'], errors = 'coerce')
-
-
-
-df2['foreign_gross']=df2_1
 
 # estimate size of market by year, at least tens of billions.
 df2.groupby('year').sum()
@@ -112,35 +102,6 @@ Name: rating, dtype: int64
 
 df3
 
-# Change monetary information from strings to numeric.
-
-df3["production_budget"] = df3["production_budget"].replace("[$,]", "", regex=True).astype(int)
-df3["domestic_gross"] = df3["domestic_gross"].replace("[$,]", "", regex=True).astype(int)
-df3["worldwide_gross"] = df3["worldwide_gross"].replace("[$,]", "", regex=True).astype(float)
-
-# Summary statistics for costs and revenues.
-df3.describe()
-
-id	production_budget	domestic_gross	worldwide_gross
-count	5782.000000	5.782000e+03	5.782000e+03	5.782000e+03
-mean	50.372363	3.158776e+07	4.187333e+07	9.148746e+07
-std	28.821076	4.181208e+07	6.824060e+07	1.747200e+08
-min	1.000000	1.100000e+03	0.000000e+00	0.000000e+00
-25%	25.000000	5.000000e+06	1.429534e+06	4.125415e+06
-50%	50.000000	1.700000e+07	1.722594e+07	2.798445e+07
-75%	75.000000	4.000000e+07	5.234866e+07	9.764584e+07
-max	100.000000	4.250000e+08	9.366622e+08	2.776345e+09
-
-import matplotlib.pyplot as plt
-%matplotlib inline
-import numpy as np
-
-df3.drop('id', axis=1)
-
-
-df3.plot('production_budget', 'domestic_gross', kind='scatter')
-
-df3.plot('production_budget', 'worldwide_gross', kind='scatter')
 
 
 # There is some correlation between production budget and sales, especially internationally, but many lower budget movies have higher sales as well.
