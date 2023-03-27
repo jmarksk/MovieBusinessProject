@@ -39,8 +39,6 @@ CJ         56
 sum(df2['domestic_gross'])
 
 
-# estimate size of market by year, at least tens of billions.
-df2.groupby('year').sum()
 
 # Find the most popular genres.
 q = pd.read_sql("""
@@ -228,6 +226,9 @@ df3_month.groupby('releaseMonth').mean().plot(kind='bar')
 
 lot:xlabel='releaseMonth'> 
 No seasonality given low grossing averages in Aug, Jan, high in November, May.
+
+# estimate size of market by year, at least tens of billions.
+
 
 # Conclusion¶
 Microsoft should follow these 3 recommedations: a) Microsoft should spend money, but with caution, in order to achieve higher profits, b) Microsoft should target the documentary, comedy and drama genres and the ratings categories of PG-13, PG and R, and c) Microsoft should focus on the movies and actors highlighted in the presentation who did well in terms of box office sales and fan ratings
